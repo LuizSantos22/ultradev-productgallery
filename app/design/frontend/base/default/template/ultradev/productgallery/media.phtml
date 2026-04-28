@@ -1,0 +1,166 @@
+<?php
+$_product = $this->getProduct();
+$_helper  = $this->helper('catalog/output');
+
+$videoUrl = $_product->getData('ultrd_gallery_video');
+$hasVideo = !empty($videoUrl);
+
+// Main image URLs
+$largeImageUrl  = $this->helper('catalog/image')->init($_product, 'image')->resize(1200);
+$mediumImageUrl = $this->helper('catalog/image')->init($_product, 'image')->resize(600);
+?>
+
+<div class="product-img-box">
+
+    <div class="product-image">
+
+        <?php if ($hasVideo): ?>
+            <div id="ultrd-video-player" style="display:none;" class="ultrd-video-wrapper">
+                <?php
+                $embedUrl = "";
+                if (strpos($videoUrl, 'youtube') !== false) {
+                    preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $videoUrl, $match);
+                    $videoId  = isset($match[1]) ? $match[1] : '';
+                    $embedUrl = "https://www.youtube.com/embed/" . $videoId . "?rel=0&enablejsapi=1";
+                } else {
+                    $embedUrl = $videoUrl;
+                }
+                ?>
+                <iframe id="video-iframe"
+                        src="<?php echo $embedUrl; ?>"
+                        frameborder="0"
+                        allowfullscreen>
+                </iframe>
+            </div>
+        <?php endif; ?>
+
+       <!-- MAIN IMAGE -->
+<div id="main-image-viewport">
+    <a id="main-lightbox-link"
+       href="<?php echo $largeImageUrl; ?>"
+       rel="lightbox-gallery"
+       title="<?php echo $this->escapeHtml($this->getImageLabel()); ?>"
+       onclick="ultrdInitLightbox(); return false;">
+        <img id="image"
+             src="<?php echo $mediumImageUrl; ?>"
+             data-zoom-image="<?php echo $largeImageUrl; ?>"
+             alt="<?php echo $this->escapeHtml($this->getImageLabel()); ?>"
+             title="<?php echo $this->escapeHtml($this->getImageLabel()); ?>"
+             fetchpriority="high"
+             width="600" />
+    </a>
+</div>
+
+        <!-- LIGHTBOX GALLERY (hidden) -->
+<div id="lightbox-hidden-gallery" style="display:none;">
+    <?php foreach ($this->getGalleryImages() as $_image): ?>
+        <?php
+        $largeUrl = $this->helper('catalog/image')
+            ->init($_product, 'image', $_image->getFile())
+            ->resize(1200);
+        $label = $_image->getLabel() ?: $_product->getName();
+        ?>
+        <a href="#"
+   data-href="<?php echo $largeUrl; ?>"
+   rel="lightbox-gallery"
+   title="<?php echo $this->escapeHtml($label); ?>"></a>
+    <?php endforeach; ?>
+</div>
+
+    </div><!-- END .product-image -->
+
+    <!-- THUMBNAILS -->
+    <?php if (count($this->getGalleryImages()) > 0 || $hasVideo): ?>
+        <div class="more-views">
+            <div class="vertical-slider-container">
+
+                <button class="vertical-slider-arrow up ic ic-up" type="button" disabled></button>
+
+                <div id="itemslider-zoom" class="slides">
+
+                    <?php if ($hasVideo): ?>
+                        <div class="item ultrd-video-item">
+                            <a href="javascript:void(0);"
+                               onclick="ultrdShowVideo(); return false;"
+                               title="<?php echo $this->__('Watch Video'); ?>">
+                                <div class="video-icon-wrapper">
+                                    <svg viewBox="0 0 492.308 492.308" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M139.615,174.964v142.38l112.091-71.192L139.615,174.964z M159.308,210.801l55.668,35.351l-55.668,35.356V210.801z" pathLength="1"/>
+                                        <path d="M364.813,167.892v-21.649c0-31.861-25.918-57.779-57.779-57.779H57.779C25.918,88.464,0,114.382,0,146.243v199.822c0,31.861,25.918,57.779,57.779,57.779h249.255c31.861,0,57.779-25.918,57.779-57.779v-21.654l127.495,63.072V104.82L364.813,167.892z" pathLength="1"/>
+                                    </svg>
+                                </div>
+                                <img src="<?php echo $this->helper('catalog/image')->init($_product, 'thumbnail')->resize(64); ?>"
+                                alt="Video Thumbnail"
+                                loading="lazy"
+                               width="64" height="64" />
+                            </a>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php foreach ($this->getGalleryImages() as $_image): ?>
+                        <?php
+                        $thumbUrl  = $this->helper('catalog/image')->init($_product, 'thumbnail', $_image->getFile())->resize(64);
+                        $mediumUrl = $this->helper('catalog/image')->init($_product, 'image',     $_image->getFile())->resize(600);
+                        $largeUrl  = $this->helper('catalog/image')->init($_product, 'image',     $_image->getFile())->resize(1200);
+                        ?>
+                        <div class="item">
+                            <a href="javascript:void(0);"
+                               onclick="ultrdShowImage('<?php echo $mediumUrl; ?>','<?php echo $largeUrl; ?>'); return false;">
+                                <img src="<?php echo $thumbUrl; ?>"
+                                 alt="<?php echo $this->escapeHtml($_image->getLabel() ?: $_product->getName()); ?>"
+                                 loading="lazy"
+                                 width="64" height="64" />
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+
+                </div><!-- END #itemslider-zoom -->
+
+                <button class="vertical-slider-arrow down ic ic-down" type="button"></button>
+
+            </div><!-- END .vertical-slider-container -->
+        </div><!-- END .more-views -->
+    <?php endif; ?>
+
+</div><!-- END .product-img-box -->
+
+<script type="text/javascript">
+//<![CDATA[
+function ultrdShowVideo() {
+    jQuery('#main-image-viewport').hide();
+    jQuery('#ultrd-video-player').show();
+}
+
+function ultrdShowImage(mediumSrc, largeSrc) {
+    var $iframe = jQuery('#video-iframe');
+    if ($iframe.length) {
+        var src = $iframe.attr('src');
+        $iframe.attr('src', '').attr('src', src);
+    }
+    var $mainImage = jQuery('#image');
+    $mainImage.attr('src', mediumSrc).attr('data-zoom-image', largeSrc);
+    jQuery('#main-lightbox-link').attr('href', largeSrc);
+    jQuery('#ultrd-video-player').hide();
+    jQuery('#main-image-viewport').show();
+    if (typeof jQuery.fn.CloudZoom !== 'undefined') {
+        $mainImage.removeData('zoom');
+        $mainImage.CloudZoom();
+    }
+}
+
+function ultrdInitLightbox() {
+    jQuery('#lightbox-hidden-gallery a').each(function() {
+        var $a = jQuery(this);
+        if ($a.attr('data-href')) {
+            $a.attr('href', $a.attr('data-href'));
+            $a.removeAttr('data-href');
+        }
+    });
+    jQuery('#main-lightbox-link').attr('onclick', '').trigger('click');
+}
+//]]>
+</script>
+
+<script type="text/javascript"
+    src="<?php echo $this->getSkinUrl('js/ultradev/productgallery.js'); ?>">
+</script>

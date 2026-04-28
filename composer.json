@@ -1,0 +1,28 @@
+{
+    "name": "ultradev/productgallery",
+    "description": "UltraDev Product Gallery module for OpenMage",
+    "type": "magento-module",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Luiz Santos",
+            "email": "luiz@ultradev.com.br",
+            "homepage": "https://ultraeletronicos.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "magento-hackathon/magento-composer-installer": "*"
+    },
+    "extra": {
+        "map": [
+            ["app/code/community/UltraDev/ProductGallery", "app/code/community/UltraDev/ProductGallery"],
+            ["app/design/frontend/base/default/layout/ultradev_productgallery.xml", "app/design/frontend/base/default/layout/ultradev_productgallery.xml"],
+            ["app/design/frontend/base/default/template/ultradev/productgallery", "app/design/frontend/base/default/template/ultradev/productgallery"],
+            ["skin/frontend/base/default/css/ultradev/productgallery.css", "skin/frontend/base/default/css/ultradev/productgallery.css"],
+            ["skin/frontend/base/default/js/ultradev/productgallery.js", "skin/frontend/base/default/js/ultradev/productgallery.js"]
+        ]
+    }
+}

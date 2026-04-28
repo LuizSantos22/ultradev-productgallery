@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <UltraDev_ProductGallery>
+            <version>1.0.0</version>
+        </UltraDev_ProductGallery>
+    </modules>
+
+    <global>
+        <helpers>
+            <ultradev_productgallery>
+                <class>UltraDev_ProductGallery_Helper</class>
+            </ultradev_productgallery>
+        </helpers>
+
+        <blocks>
+            <ultradev_productgallery>
+                <class>UltraDev_ProductGallery_Block</class>
+            </ultradev_productgallery>
+        </blocks>
+
+        <resources>
+            <ultradev_productgallery_setup>
+                <setup>
+                    <module>UltraDev_ProductGallery</module>
+                    <class>Mage_Catalog_Model_Resource_Setup</class>
+                </setup>
+            </ultradev_productgallery_setup>
+        </resources>
+    </global>
+
+    <frontend>
+        <layout>
+            <updates>
+                <ultradev_productgallery>
+                    <file>ultradev_productgallery.xml</file>
+                </ultradev_productgallery>
+            </updates>
+        </layout>
+    </frontend>
+</config>
